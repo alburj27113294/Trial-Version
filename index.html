@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
     <script type="text/javascript">
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({
@@ -18,7 +19,7 @@
         }
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    
+
     <style>
         :root {
             --primary: #2563eb; --success: #10b981; --danger: #ef4444; --info: #0ea5e9; --purple: #8b5cf6; --whatsapp: #25d366;
@@ -27,8 +28,7 @@
         .dark-mode { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --border: #334155; --nav-bg: rgba(30, 41, 59, 0.9); }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); margin: 0; transition: 0.3s; top: 0 !important; }
         .goog-te-banner-frame.skiptranslate, .goog-te-gadget-icon { display: none !important; }
-        body { top: 0px !important; }
-
+        
         .top-bar { background: var(--card); padding: 8px 15px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .nav-header { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; width: 100%; max-width: 1200px; margin: auto; }
 
@@ -50,7 +50,7 @@
         .progress-container { background: #e2e8f0; height: 10px; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
         .progress-bar { height: 100%; background: var(--success); width: 0%; transition: 0.5s; }
         
-        .admin-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; background: var(--card); }
+        .admin-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; background: var(--card); margin-top: 10px; }
         .admin-table th, .admin-table td { padding: 10px; border: 1px solid var(--border); text-align: center; }
 
         .report-btn { background: var(--purple); color: white; border: none; padding: 12px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
@@ -61,6 +61,7 @@
         .nav-item span { font-size: 0.6rem; font-weight: 800; }
 
         .container { max-width: 1200px; margin: 15px auto; padding: 0 10px; padding-bottom: 80px; }
+        #google_translate_element { display: none; }
     </style>
 </head>
 <body>
@@ -113,12 +114,132 @@
                 <select id="daySelect" onchange="updateUI()"></select>
                 <select id="teacherSelect" onchange="updateUI()" style="display:none;"></select>
                 <select id="gradeSelect" onchange="updateUI()"><option value="">كل الصفوف</option></select>
-                <select id="sectionSelect" onchange="updateUI()"><option value="">كل الشعب</option><option value="أ">أ</option><option value="ب">ب</option></select>
+                <select id="sectionSelect" onchange="updateUI()"><option value="">الشعبة (الكل)</option><option value="أ">أ</option><option value="ب">ب</option></select>
             </div>
-            <div id="displayArea">جاري المزامنة...</div>
+            <div id="displayArea" style="min-height: 100px;">جاري المزامنة...</div>
         </div>
     </div>
 </div>
 
-<div id="bottomNav" class="bottom-nav">
-    <div class="nav-item" onclick="location.reload()">
+<div class="bottom-nav">
+    <div class="nav-item" onclick="location.reload()"><i class="fas fa-sync-alt" style="color:var(--success)"></i><span>تحديث</span></div>
+    <div class="nav-item" onclick="toggleLanguage()"><i class="fas fa-language" style="color:var(--purple)"></i><span>اللغة</span></div>
+    <div class="nav-item" onclick="showAbout()"><i class="fas fa-info-circle" style="color:var(--info)"></i><span>عن</span></div>
+</div>
+
+<script>
+    let rawData = [];
+    const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRaHhyMG9OYbl8nZxRLR04t_vocqxtHkDWMKr6PA5yPtPnWjF2Pmzx6R5epSUWwabJL8AFvcUem-Mau/pub?gid=0&single=true&output=csv';
+    const weekDays = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
+
+    function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
+
+    async function loadData() {
+        try {
+            const r = await fetch(sheetURL + '&t=' + Date.now());
+            const t = await r.text();
+            const lines = t.split('\n').filter(l => l.trim() !== "");
+            rawData = lines.slice(1).map(row => {
+                const c = row.split(',');
+                return { day: c[0]?.trim(), grade: c[1]?.trim(), section: c[2]?.trim(), sub: c[3]?.trim(), teacher: c[4]?.trim(), s: c[5]?.trim(), e: c[6]?.trim(), link: c[7]?.trim(), phone: c[8]?.trim() };
+            });
+            setupFilters();
+            updateUI();
+            document.getElementById('tickerText').innerText = "تم تحميل البيانات بنجاح .. أهلاً بكم في منصة العنقود.";
+        } catch(e) { 
+            console.error(e); 
+            document.getElementById('displayArea').innerText = "فشل في جلب البيانات.";
+        }
+    }
+
+    function setupFilters() {
+        const role = sessionStorage.getItem('userRole');
+        if(role === 'إدارة وإشراف') document.getElementById('teacherSelect').style.display = 'block';
+        
+        const ts = [...new Set(rawData.map(i => i.teacher))].filter(x => x).sort();
+        document.getElementById('teacherSelect').innerHTML = '<option value="">المعلم (الكل)</option>' + ts.map(t => `<option value="${t}">${t}</option>`).join('');
+        
+        const gs = [...new Set(rawData.map(i => i.grade))].filter(x => x).sort();
+        document.getElementById('gradeSelect').innerHTML = '<option value="">الصف (الكل)</option>' + gs.map(g => `<option value="${g}">${g}</option>`).join('');
+        
+        const ds = document.getElementById('daySelect');
+        ds.innerHTML = weekDays.map(d => `<option value="${d}">${d}</option>`).join('');
+        ds.value = weekDays[new Date().getDay()] || "الأحد";
+    }
+
+    function handleLogin() {
+        const p = document.getElementById('sysPass').value.trim();
+        let role = (p === "1") ? 'طالب' : (p === "3294") ? 'معلم' : (p === "1234") ? 'إدارة وإشراف' : '';
+        if(!role) { Swal.fire('خطأ', 'الرمز غير صحيح', 'error'); return; }
+        sessionStorage.setItem('isLoggedIn', 'true');
+        sessionStorage.setItem('userRole', role);
+        showApp();
+    }
+
+    function showApp() {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+        const role = sessionStorage.getItem('userRole');
+        document.getElementById('userBadge').innerText = "البوابة: " + role;
+        if(role === 'إدارة وإشراف') document.getElementById('adminDashboard').style.display = 'block';
+        loadData();
+    }
+
+    function updateUI() {
+        const area = document.getElementById('displayArea');
+        const role = sessionStorage.getItem('userRole');
+        const f = { d: document.getElementById('daySelect').value, g: document.getElementById('gradeSelect').value, s: document.getElementById('sectionSelect').value, t: document.getElementById('teacherSelect')?.value || "" };
+        const now = new Date(); const curMins = now.getHours() * 60 + now.getMinutes();
+        
+        let filtered = rawData.filter(i => i.day === f.d && (f.g === "" || i.grade === f.g) && (f.s === "" || i.section === f.s) && (role !== 'إدارة وإشراف' || f.t === "" || i.teacher === f.t));
+        
+        if(role === 'إدارة وإشراف') {
+            let act = 0, done = 0, wait = 0;
+            let html = `<table class="admin-table"><thead><tr><th>الصف</th><th>المعلم</th><th>الحالة</th></tr></thead><tbody>`;
+            filtered.forEach(l => {
+                const sm = (parseInt(l.s.split(':')[0])*60) + parseInt(l.s.split(':')[1]);
+                const em = (parseInt(l.e.split(':')[0])*60) + parseInt(l.e.split(':')[1]);
+                let status = (curMins >= sm && curMins <= em) ? 'نشطة' : (curMins > em) ? 'مكتملة' : 'انتظار';
+                if(status === 'نشطة') act++; else if(status === 'مكتملة') done++; else wait++;
+                html += `<tr><td>${l.grade}-${l.section}</td><td>${l.teacher}</td><td>${status}</td></tr>`;
+            });
+            area.innerHTML = html + "</tbody></table>";
+            document.getElementById('countActive').innerText = act;
+            document.getElementById('countWait').innerText = wait;
+            document.getElementById('countDone').innerText = done;
+            const p = filtered.length > 0 ? Math.round((done / filtered.length) * 100) : 0;
+            document.getElementById('percentDone').innerText = p + "%";
+            document.getElementById('progBar').style.width = p + "%";
+        } else {
+            let html = '<div style="display:grid; gap:10px;">';
+            filtered.forEach(l => {
+                const sm = (parseInt(l.s.split(':')[0])*60) + parseInt(l.s.split(':')[1]);
+                const em = (parseInt(l.e.split(':')[0])*60) + parseInt(l.e.split(':')[1]);
+                const isOpen = (curMins >= sm - 5 && curMins <= em + 5);
+                html += `<div class="auth-card" style="border-right:5px solid ${isOpen?'var(--success)':'var(--danger)'}; text-align:right;">
+                    <b>${l.sub}</b> | ${l.teacher}<br><small>${l.grade}-${l.section} | ${l.s} - ${l.e}</small>
+                    <button style="width:100%; padding:8px; border-radius:10px; border:none; margin-top:10px; background:${isOpen?'var(--primary)':'gray'}; color:white" ${isOpen?'':'disabled'} onclick="window.open('${l.link}')">${isOpen?'دخول الحصة':'الحصة مغلقة'}</button>
+                </div>`;
+            });
+            area.innerHTML = html + (filtered.length ? '</div>' : 'لا يوجد حصص حالياً</div>');
+        }
+    }
+
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('clockDisplay').innerText = now.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'});
+        document.getElementById('dateDisplay').innerText = now.toLocaleDateString('ar-EG', {weekday:'short', day:'numeric', month:'short'});
+    }
+
+    function toggleLanguage() { Swal.fire('قريباً', 'ميزة الترجمة قيد التطوير', 'info'); }
+    function showAbout() { Swal.fire('منصة العنقود', 'تطوير: م. سامي غنام\nنسخة v2.9.5', 'info'); }
+    function handleLogout() { sessionStorage.clear(); location.reload(); }
+
+    setInterval(updateClock, 1000);
+    window.onload = () => { 
+        updateClock(); 
+        if(sessionStorage.getItem('isLoggedIn')) showApp(); 
+    };
+</script>
+</body>
+</html>
