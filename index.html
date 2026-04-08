@@ -8,6 +8,13 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({pageLanguage: 'ar', includedLanguages: 'ar,en', autoDisplay: false}, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
     <style>
         :root {
             --primary: #2563eb; --success: #10b981; --danger: #ef4444; --info: #0ea5e9; --purple: #8b5cf6; --whatsapp: #25d366;
@@ -16,25 +23,20 @@
         .dark-mode { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --border: #334155; --nav-bg: rgba(30, 41, 59, 0.9); }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); margin: 0; transition: 0.3s; top: 0 !important; }
         
+        /* تنسيقات إضافية لإخفاء عناصر ترجمة جوجل الافتراضية */
+        .goog-te-banner-frame.skiptranslate, .goog-te-gadget-icon { display: none !important; }
+        #google_translate_element { display: none; }
+
         .top-bar { background: var(--card); padding: 8px 15px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .nav-header { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 15px; width: 100%; max-width: 1200px; margin: auto; }
 
         .header-ticker { 
-            overflow: hidden; 
-            white-space: nowrap; 
-            background: rgba(37, 99, 235, 0.05); 
-            border-radius: 20px; 
-            padding: 4px 10px; 
-            border: 1px inset var(--border);
+            overflow: hidden; white-space: nowrap; background: rgba(37, 99, 235, 0.05); 
+            border-radius: 20px; padding: 4px 10px; border: 1px inset var(--border);
         }
         .header-ticker p { 
-            display: inline-block; 
-            padding-right: 100%; 
-            animation: ticker 25s linear infinite; 
-            margin: 0; 
-            color: var(--primary); 
-            font-weight: 800; 
-            font-size: 0.8rem; 
+            display: inline-block; padding-right: 100%; animation: ticker 25s linear infinite; 
+            margin: 0; color: var(--primary); font-weight: 800; font-size: 0.8rem; 
         }
         @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(100%, 0, 0); } }
 
@@ -67,14 +69,14 @@
 </head>
 <body class="has-nav">
 
+<div id="google_translate_element"></div>
+
 <div id="topBar" class="top-bar">
     <div class="nav-header">
         <div id="dateDisplay" class="notranslate" style="font-weight: 800; color: var(--text); font-size: 0.7rem;"></div>
-        
         <div class="header-ticker">
             <p id="tickerText">مرحباً بكم في منصة العنقود الرقمية .. إدارة المدرسة ومشرف العنقود يحييكم .. عام دراسي مبدع للجميع.</p>
         </div>
-
         <div style="display: flex; align-items: center; gap: 8px;">
             <div id="clockDisplay" class="notranslate" style="font-weight: 900; font-size: 0.8rem; color: var(--primary);"></div>
             <i class="fas fa-circle-half-stroke fa-lg" onclick="toggleDarkMode()" style="cursor: pointer; color: var(--gray);"></i>
@@ -113,7 +115,6 @@
                 <span id="userBadge" style="background: var(--primary); color: white; padding: 4px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: bold;"></span>
                 <button style="color: var(--danger); border: none; background: none; font-weight: bold; cursor: pointer; font-size: 0.8rem;" onclick="handleLogout()">خروج</button>
             </div>
-            
             <div class="filter-grid-expanded">
                 <select id="daySelect" onchange="updateUI()"></select>
                 <select id="teacherSelect" onchange="updateUI()" style="display:none;"></select>
@@ -127,29 +128,69 @@
 
 <div id="bottomNav" class="bottom-nav">
     <div class="nav-item" onclick="location.reload()"><i class="fas fa-redo-alt" style="color:var(--success)"></i><span>تحديث</span></div>
+    
+    <div class="nav-item" onclick="toggleLanguage()">
+        <i class="fas fa-language" style="color:var(--purple)"></i>
+        <span id="langText">English</span>
+    </div>
+
     <div class="nav-item" onclick="showAbout()"><i class="fas fa-code" style="color:var(--info)"></i><span>v2.9.5</span></div>
+    
+    <div class="nav-item" onclick="window.location.href='mailto:sami.ghannam@shebron.edu.ps?subject=دعم منصة العنقود'">
+        <i class="fas fa-headset" style="color:#f59e0b"></i>
+        <span>الدعم</span>
+    </div>
 </div>
 
 <script>
     let rawData = [];
+    let currentLang = 'ar';
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRaHhyMG9OYbl8nZxRLR04t_vocqxtHkDWMKr6PA5yPtPnWjF2Pmzx6R5epSUWwabJL8AFvcUem-Mau/pub?gid=0&single=true&output=csv';
     const weekDays = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
 
     function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
 
-    // تحديث الساعة والتاريخ
     function updateClock() {
         const now = new Date();
         const clockDisplay = document.getElementById('clockDisplay');
         const dateDisplay = document.getElementById('dateDisplay');
-        
         if(clockDisplay) clockDisplay.innerText = now.toLocaleTimeString('en-GB', {hour12: false});
         if(dateDisplay) dateDisplay.innerText = now.toLocaleDateString('ar-EG', {weekday:'short', day:'numeric', month:'short'});
-        
-        // تحديث الواجهة تلقائياً كل دقيقة إذا كان مسجل دخول
-        if(now.getSeconds() === 0 && sessionStorage.getItem('isLoggedIn')) { 
-            updateUI(); 
+        if(now.getSeconds() === 0 && sessionStorage.getItem('isLoggedIn')) { updateUI(); }
+    }
+
+    // دالة استخراج التقارير Excel
+    function generateDailyReport() {
+        if (rawData.length === 0) {
+            Swal.fire('تنبيه', 'لا توجد بيانات متاحة للتصدير حالياً', 'warning');
+            return;
         }
+        const reportData = rawData.map(i => ({
+            'اليوم': i.day, 'الصف': i.grade, 'الشعبة': i.section, 'المادة': i.sub, 
+            'المعلم': i.teacher, 'البداية': i.s, 'النهاية': i.e, 'الرابط': i.link
+        }));
+        const ws = XLSX.utils.json_to_sheet(reportData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "تقرير المنصة");
+        XLSX.writeFile(wb, `تقرير_العنقود_${new Date().toLocaleDateString('ar-EG')}.xlsx`);
+        Swal.fire('تم بنجاح', 'تم استخراج التقرير وتحميله', 'success');
+    }
+
+    // دالة الترجمة
+    function toggleLanguage() {
+        const combo = document.querySelector('.goog-te-combo');
+        if (!combo) return;
+        if (currentLang === 'ar') {
+            combo.value = 'en'; currentLang = 'en';
+            document.getElementById('langText').innerText = 'العربية';
+            document.documentElement.setAttribute('dir', 'ltr');
+        } else {
+            combo.value = 'ar'; currentLang = 'ar';
+            document.getElementById('langText').innerText = 'English';
+            document.documentElement.setAttribute('dir', 'rtl');
+        }
+        combo.dispatchEvent(new Event('change'));
+        setTimeout(updateUI, 500);
     }
 
     async function loadData() {
@@ -159,11 +200,7 @@
             const lines = t.split('\n').filter(l => l.trim() !== "");
             rawData = lines.slice(1).map(row => {
                 const c = row.split(',');
-                return { 
-                    day: c[0]?.trim(), grade: c[1]?.trim(), section: c[2]?.trim(), 
-                    sub: c[3]?.trim(), teacher: c[4]?.trim(), s: c[5]?.trim(), 
-                    e: c[6]?.trim(), link: c[7]?.trim(), phone: c[8]?.trim() 
-                };
+                return { day: c[0]?.trim(), grade: c[1]?.trim(), section: c[2]?.trim(), sub: c[3]?.trim(), teacher: c[4]?.trim(), s: c[5]?.trim(), e: c[6]?.trim(), link: c[7]?.trim(), phone: c[8]?.trim() };
             });
             setupFilters(); updateUI();
         } catch(e) { console.error("Data Sync Error"); }
@@ -172,13 +209,10 @@
     function setupFilters() {
         const role = sessionStorage.getItem('userRole');
         if(role === 'إدارة وإشراف') document.getElementById('teacherSelect').style.display = 'block';
-        
         const ts = [...new Set(rawData.map(i => i.teacher))].filter(x => x).sort();
         document.getElementById('teacherSelect').innerHTML = '<option value="">المعلم</option>' + ts.map(t => `<option value="${t}">${t}</option>`).join('');
-        
         const gs = [...new Set(rawData.map(i => i.grade))].filter(x => x).sort();
         document.getElementById('gradeSelect').innerHTML = '<option value="">الصف</option>' + gs.map(g => `<option value="${g}">${g}</option>`).join('');
-        
         const ds = document.getElementById('daySelect');
         ds.innerHTML = weekDays.map(d => `<option value="${d}">${d}</option>`).join('');
         ds.value = weekDays[new Date().getDay()] || "الأحد";
@@ -195,26 +229,17 @@
     function showApp() {
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
-        const role = sessionStorage.getItem('userRole');
-        document.getElementById('userBadge').innerText = "البوابة: " + role;
-        if(role === 'إدارة وإشراف') document.getElementById('adminDashboard').style.display = 'block';
+        document.getElementById('userBadge').innerText = "البوابة: " + sessionStorage.getItem('userRole');
+        if(sessionStorage.getItem('userRole') === 'إدارة وإشراف') document.getElementById('adminDashboard').style.display = 'block';
         loadData();
     }
 
     function updateUI() {
         const area = document.getElementById('displayArea');
         if(!area || rawData.length === 0) return;
-        
         const role = sessionStorage.getItem('userRole');
-        const f = { 
-            d: document.getElementById('daySelect').value, 
-            g: document.getElementById('gradeSelect').value, 
-            s: document.getElementById('sectionSelect').value, 
-            t: document.getElementById('teacherSelect')?.value || "" 
-        };
-        
-        const now = new Date(); 
-        const curMins = now.getHours() * 60 + now.getMinutes();
+        const f = { d: document.getElementById('daySelect').value, g: document.getElementById('gradeSelect').value, s: document.getElementById('sectionSelect').value, t: document.getElementById('teacherSelect')?.value || "" };
+        const now = new Date(); const curMins = now.getHours() * 60 + now.getMinutes();
         let filtered = rawData.filter(i => i.day === f.d && (f.g === "" || i.grade === f.g) && (f.s === "" || i.section === f.s) && (role !== 'إدارة وإشراف' || f.t === "" || i.teacher === f.t));
         
         if(role === 'إدارة وإشراف') {
@@ -226,16 +251,12 @@
                 let sCol = (curMins >= sm && curMins <= em) ? 'var(--success)' : (curMins > em) ? 'var(--gray)' : 'var(--danger)';
                 let sTxt = (curMins >= sm && curMins <= em) ? 'نشطة' : (curMins > em) ? 'منتهية' : 'انتظار';
                 if(curMins>=sm && curMins<=em) act++; else if(curMins>em) done++; else wait++;
-                
                 html += `<tr><td>${l.grade}-${l.section}</td><td>${l.teacher}</td><td><button onclick="window.open('${l.link}')" style="background:none; border:1px solid ${sCol}; color:${sCol}; padding:5px; border-radius:8px; font-weight:bold; width:100%">${sTxt}</button></td><td><button onclick="window.open('https://wa.me/${l.phone}')" style="background:var(--whatsapp); color:white; border:none; padding:5px 10px; border-radius:8px;"><i class="fab fa-whatsapp"></i></button></td></tr>`;
             });
             area.innerHTML = html + "</tbody></table>";
-            document.getElementById('countActive').innerText = act; 
-            document.getElementById('countWait').innerText = wait; 
-            document.getElementById('countDone').innerText = done;
+            document.getElementById('countActive').innerText = act; document.getElementById('countWait').innerText = wait; document.getElementById('countDone').innerText = done;
             const p = filtered.length > 0 ? Math.round(((done + act) / filtered.length) * 100) : 0;
-            document.getElementById('percentDone').innerText = p + "%"; 
-            document.getElementById('progBar').style.width = p + "%";
+            document.getElementById('percentDone').innerText = p + "%"; document.getElementById('progBar').style.width = p + "%";
         } else {
             let html = '<div style="display:grid; gap:10px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">';
             filtered.forEach(l => {
@@ -252,15 +273,10 @@
     function confirmFinalExit() { Swal.fire({ title: 'خروج نهائي؟', text: "هل أنت متأكد!", icon: 'warning', showCancelButton: true }).then((r) => { if(r.isConfirmed) { sessionStorage.clear(); window.location.replace("https://www.google.ps"); } }); }
     function showAbout() { Swal.fire(' م. سامي غنام' , 'منصة العنقود الرقمية v2.9.5\n نظام التعلم الالكتروني والتحفيز الذكي', 'info'); }
 
-    // تشغيل الساعة كل ثانية
     setInterval(updateClock, 1000);
-
-    // عند تشغيل الصفحة
     window.onload = () => { 
-        updateClock(); // تشغيل الساعة فوراً عند التحميل
-        if(sessionStorage.getItem('isLoggedIn')) {
-            showApp(); 
-        }
+        updateClock(); 
+        if(sessionStorage.getItem('isLoggedIn')) showApp(); 
     };
 </script>
 </body>
