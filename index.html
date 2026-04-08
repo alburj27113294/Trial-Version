@@ -164,7 +164,6 @@
 
     function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
 
-    // تحديث نص شريط الإعلانات ليشمل لوحة الشرف
     function updateTickerWithHonorRoll() {
         const honorRoll = " 🏆 لوحة شرف فرسان الالتزام: (ساجي سامي - 3أ)، (سلاف غنام - 9أ)، (ايلاف سامي - 7أ) .. شكراً لمواظبتكم! .. ";
         const baseMsg = "مرحباً بكم في منصة العنقود الرقمية .. الادارة المدرسية وم. سامي غنام يحييكم ويحثكم على الالتزام .. ";
@@ -196,11 +195,11 @@
             updateTeacherStatsUI();
         }
         const ts = [...new Set(rawData.map(i => i.teacher))].filter(x => x).sort();
-        document.getElementById('teacherSelect').innerHTML = '<option value="">المعلم</option>' + ts.map(t => <option value="${t}">${t}</option>).join('');
+        document.getElementById('teacherSelect').innerHTML = '<option value="">المعلم</option>' + ts.map(t => `<option value="${t}">${t}</option>`).join('');
         const gs = [...new Set(rawData.map(i => i.grade))].filter(x => x).sort();
-        document.getElementById('gradeSelect').innerHTML = '<option value="">الصف</option>' + gs.map(g => <option value="${g}">${g}</option>).join('');
+        document.getElementById('gradeSelect').innerHTML = '<option value="">الصف</option>' + gs.map(g => `<option value="${g}">${g}</option>`).join('');
         const ds = document.getElementById('daySelect');
-        ds.innerHTML = weekDays.map(d => <option value="${d}">${d}</option>).join('');
+        ds.innerHTML = weekDays.map(d => `<option value="${d}">${d}</option>`).join('');
         ds.value = weekDays[new Date().getDay()] || "الأحد";
     }
 
@@ -242,6 +241,7 @@
 
     function updateUI() {
         const area = document.getElementById('displayArea');
+        if(!area) return;
         const role = sessionStorage.getItem('userRole');
         const f = { d: document.getElementById('daySelect').value, g: document.getElementById('gradeSelect').value, s: document.getElementById('sectionSelect').value, t: document.getElementById('teacherSelect')?.value || "" };
         const now = new Date(); const curMins = now.getHours() * 60 + now.getMinutes();
@@ -249,62 +249,12 @@
         
         if(role === 'إدارة وإشراف') {
             let act = 0, wait = 0, done = 0;
-            let html = <table class="admin-table"><thead><tr><th>الصف</th><th>المعلم</th><th>الحالة</th><th>تنبيه</th></tr></thead><tbody>;
+            let html = `<table class="admin-table"><thead><tr><th>الصف</th><th>المعلم</th><th>الحالة</th><th>تنبيه</th></tr></thead><tbody>`;
             filtered.forEach(l => {
                 const sm = (l.s.split(':')[0]*60) + Number(l.s.split(':')[1]);
                 const em = (l.e.split(':')[0]*60) + Number(l.e.split(':')[1]);
                 let sCol = (curMins >= sm && curMins <= em) ? 'var(--success)' : (curMins > em) ? 'var(--gray)' : 'var(--danger)';
                 let sTxt = (curMins >= sm && curMins <= em) ? 'نشطة' : (curMins > em) ? 'منتهية' : 'انتظار';
                 if(curMins>=sm && curMins<=em) act++; else if(curMins>em) done++; else wait++;
-                const waLink = https://wa.me/${l.phone}?text=${encodeURIComponent('يرجى بدء الحصة لصف '+l.grade+'-'+l.section)};
-                html += <tr><td>${l.grade}-${l.section}</td><td>${l.teacher}</td><td><button onclick="window.open('${l.link}')" style="background:none; border:1px solid ${sCol}; color:${sCol}; padding:5px; border-radius:8px; font-weight:bold; width:100%">${sTxt}</button></td><td><button onclick="window.open('${waLink}')" style="background:var(--whatsapp); color:white; border:none; padding:5px 10px; border-radius:8px; cursor:pointer;"><i class="fab fa-whatsapp"></i></button></td></tr>;
-            });
-            area.innerHTML = html + "</tbody></table>";
-            document.getElementById('countActive').innerText = act; document.getElementById('countWait').innerText = wait; document.getElementById('countDone').innerText = done;
-            const p = filtered.length > 0 ? Math.round(((done + act) / filtered.length) * 100) : 0;
-            document.getElementById('percentDone').innerText = p + "%"; document.getElementById('progBar').style.width = p + "%";
-        } else {
-            area.innerHTML = <div style="display:grid; gap:10px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));"></div>;
-            filtered.forEach(l => {
-                const sm = (l.s.split(':')[0]*60) + Number(l.s.split(':')[1]);
-                const em = (l.e.split(':')[0]*60) + Number(l.e.split(':')[1]);
-                const isOpen = (curMins >= sm - 5 && curMins <= em + 5);
-                area.firstChild.innerHTML += <div class="auth-card" style="border-right:5px solid ${isOpen?'var(--success)':'var(--danger)'}; text-align:right; margin-bottom:5px;"><b>${l.sub}</b> | ${l.teacher}<br><small>${l.grade}-${l.section} | ${l.s} - ${l.e}</small><br><button style="width: 100%; padding: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; margin-top:8px; background:${isOpen?'var(--primary)':'gray'}; color:white" ${isOpen?'':'disabled'} onclick="checkAndRecordOnTime('${l.s}'); window.open('${l.link}')">${isOpen?'دخول الآن':'الحصة مغلقة'}</button></div>;
-            });
-        }
-    }
-
-    function generateDailyReport() {
-        const day = document.getElementById('daySelect').value;
-        let reportData = rawData.filter(i => i.day === day).map(l => ({ 'اليوم': l.day, 'الصف': l.grade, 'المعلم': l.teacher, 'المادة': l.sub, 'الوقت': l.s + '-' + l.e }));
-        const ws = XLSX.utils.json_to_sheet(reportData);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "التقرير");
-        XLSX.writeFile(wb, تقرير_العنقود_${day}.xlsx);
-    }
-
-    function toggleLanguage() {
-        const combo = document.querySelector('.goog-te-combo');
-        if (!combo) return;
-        if (currentLang === 'ar') { combo.value = 'en'; currentLang = 'en'; document.getElementById('langText').innerText = 'العربية'; document.documentElement.setAttribute('dir', 'ltr'); }
-        else { combo.value = 'ar'; currentLang = 'ar'; document.getElementById('langText').innerText = 'English'; document.documentElement.setAttribute('dir', 'rtl'); }
-        combo.dispatchEvent(new Event('change'));
-        setTimeout(updateUI, 400);
-    }
-
-    function handleLogout() { sessionStorage.removeItem('isLoggedIn'); window.location.reload(); }
-    function confirmFinalExit() { Swal.fire({ title: 'خروج نهائي؟', text: "هل أنت متأكد!", icon: 'warning', showCancelButton: true }).then((r) => { if(r.isConfirmed) { sessionStorage.clear(); window.location.replace("https://www.google.ps"); } }); }
-
-    function updateClock() {
-        const now = new Date();
-        if(document.getElementById('clockDisplay')) document.getElementById('clockDisplay').innerText = now.toLocaleTimeString('en-GB', {hour12: false});
-        if(document.getElementById('dateDisplay')) document.getElementById('dateDisplay').innerText = now.toLocaleDateString('ar-EG', {weekday:'short', day:'numeric', month:'short'});
-        if(now.getSeconds() === 0 && sessionStorage.getItem('isLoggedIn')) { updateUI(); updateTickerWithHonorRoll(); }
-    }
-    function showAbout() { Swal.fire(' م. سامي غنام' , 'منصة العنقود الرقمية التجريبية v1.0.1\n نظام التعلم الالكتروني والتحفيز الذكي', 'info'); }
-
-    setInterval(updateClock, 1000);
-    window.onload = () => { if(sessionStorage.getItem('isLoggedIn')) showApp(); else updateClock(); };
-</script>
-</body>
-</html>
+                const waLink = `https://wa.me/${l.phone}?text=${encodeURIComponent('يرجى بدء الحصة لصف '+l.grade+'-'+l.section)}`;
+                html += `<tr><td>${l.grade}-${l.section}</td><td>${l.teacher}</td><td><button onclick="window.open('${l.link}')" style="background:none; border:1px solid ${sCol}; color:${sCol}; padding:5px; border-
