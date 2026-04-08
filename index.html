@@ -75,7 +75,7 @@
     <div class="nav-header">
         <div id="dateDisplay" class="notranslate" style="font-weight: 800; color: var(--text); font-size: 0.7rem;"></div>
         <div class="header-ticker">
-            <p id="tickerText">مرحباً بكم في منصة العنقود الرقمية .. إدارة المدرسة ومشرف العنقود يحييكم .. عام دراسي مبدع للجميع.</p>
+            <p id="tickerText">مرحباً بكم في منصة العنقود الرقمية .. إدارة المدرسة يحييكم .. عام دراسي مبدع للجميع.</p>
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
             <div id="clockDisplay" class="notranslate" style="font-weight: 900; font-size: 0.8rem; color: var(--primary);"></div>
@@ -89,7 +89,7 @@
         <div class="auth-card">
             <img src="https://github.com/Sami-ghannam/Beit-Alroosh-AlTehta-School/blob/main/logo.png?raw=true" style="width: 60px;">
             <h3 style="color: var(--primary); margin: 10px 0;">تسجيل الدخول للمنصة</h3>
-            <p style="font-size: 0.65rem; color: var(--gray); margin-bottom: 20px;"> م. سامي غنام - الإصدار التجريبي</p>
+            <p style="font-size: 0.65rem; color: var(--gray); margin-bottom: 20px;"> السكرتير مروان نصر - الاصدار التجريبي</p>
             <input type="password" id="sysPass" style="width: 90%; padding: 12px; border-radius: 12px; border: 2px solid var(--border); text-align: center; font-weight: 900; background: var(--bg); color: var(--text); font-size: 1rem; margin-bottom: 15px;" placeholder="أدخل الرمز">
             <button style="width: 90%; padding: 12px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; background: var(--primary); color: white; margin-bottom: 10px;" onclick="handleLogin()">دخول</button>
             <button style="width: 90%; padding: 10px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; background: #fee2e2; color: var(--danger);" onclick="confirmFinalExit()"><i class="fas fa-power-off"></i> إغلاق</button>
@@ -136,7 +136,7 @@
 
     <div class="nav-item" onclick="showAbout()"><i class="fas fa-code" style="color:var(--info)"></i><span>v2.9.5</span></div>
     
-    <div class="nav-item" onclick="window.location.href='mailto:sami.ghannam@shebron.edu.ps?subject=دعم منصة العنقود'">
+    <div class="nav-item" onclick="window.location.href='mailto:944868603@shebron.edu.ps?subject=دعم منصة العنقود'">
         <i class="fas fa-headset" style="color:#f59e0b"></i>
         <span>الدعم</span>
     </div>
@@ -271,7 +271,7 @@
 
     function handleLogout() { sessionStorage.removeItem('isLoggedIn'); window.location.reload(); }
     function confirmFinalExit() { Swal.fire({ title: 'خروج نهائي؟', text: "هل أنت متأكد!", icon: 'warning', showCancelButton: true }).then((r) => { if(r.isConfirmed) { sessionStorage.clear(); window.location.replace("https://www.google.ps"); } }); }
-    function showAbout() { Swal.fire(' م. سامي غنام' , 'منصة العنقود الرقمية v2.9.5\n نظام التعلم الالكتروني والتحفيز الذكي', 'info'); }
+    function showAbout() { Swal.fire(' م. مروان نصر' , 'منصة العنقود الرقمية v2.9.5\n نظام التعلم الالكتروني والتحفيز الذكي', 'info'); }
 
     setInterval(updateClock, 1000);
     window.onload = () => { 
