@@ -7,16 +7,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'ar',
-                includedLanguages: 'ar,en',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                autoDisplay: false
-            }, 'google_translate_element');
-        }
-    </script>
+  //  <script type="text/javascript">
+     //   function googleTranslateElementInit() {
+       //     new google.translate.TranslateElement({
+       //         pageLanguage: 'ar',
+       //         includedLanguages: 'ar,en',
+        //        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        //        autoDisplay: false
+       //     }, 'google_translate_element');
+     //   }
+//    </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     
     <style>
@@ -158,17 +158,17 @@
 
 <script>
     let rawData = [];
-    const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRa-upd7Oa8Ma0r3PaX0XoZdvLhz9kkCXayodb3FDbbYT-W0k6SHC3GKN1-sXz75O7BIbE2FE5lBO-k/pub?gid=0&single=true&output=csv';
+    const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRaHhyMG9OYbl8nZxRLR04t_vocqxtHkDWMKr6PA5yPtPnWjF2Pmzx6R5epSUWwabJL8AFvcUem-Mau/pub?gid=0&single=true&output=csv';
     const weekDays = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
     let currentLang = 'ar';
 
     function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
 
     // تحديث نص شريط الإعلانات ليشمل لوحة الشرف
-    function updateTickerWithHonorRoll() {
-        const honorRoll = " 🏆 لوحة شرف فرسان الالتزام: (ساجي سامي - 3أ)، (سلاف غنام - 9أ)، (ايلاف سامي - 7أ) .. شكراً لمواظبتكم! .. ";
-        const baseMsg = "مرحباً بكم في منصة العنقود الرقمية .. الادارة المدرسية وم. سامي غنام يحييكم ويحثكم على الالتزام .. ";
-        document.getElementById('tickerText').innerText = baseMsg + honorRoll + " عام دراسي مبدع وهادئ للجميع.";
+    //function updateTickerWithHonorRoll() {
+    //    const honorRoll = " 🏆 لوحة شرف فرسان الالتزام: (ساجي سامي - 3أ)، (سلاف غنام - 9أ)، (ايلاف سامي - 7أ) .. شكراً لمواظبتكم! .. ";
+    //    const baseMsg = "مرحباً بكم في منصة العنقود الرقمية .. الادارة المدرسية وم. سامي غنام يحييكم ويحثكم على الالتزام .. ";
+    //    document.getElementById('tickerText').innerText = baseMsg + honorRoll + " عام دراسي مبدع وهادئ للجميع.";
     }
 
     async function loadData() {
@@ -206,7 +206,7 @@
 
     function handleLogin() {
         const p = document.getElementById('sysPass').value.trim();
-        let role = (p === "1") ? 'طالب' : (p === "1111") ? 'معلم' : (p === "1234") ? 'إدارة وإشراف' : '';
+        let role = (p === "1") ? 'طالب' : (p === "3294") ? 'معلم' : (p === "1234") ? 'إدارة وإشراف' : '';
         if(!role) { Swal.fire('تنبيه', 'الرمز غير صحيح', 'error'); return; }
         sessionStorage.setItem('isLoggedIn', 'true'); sessionStorage.setItem('userRole', role);
         showApp();
