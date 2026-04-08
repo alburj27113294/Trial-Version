@@ -7,17 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  //  <script type="text/javascript">
-     //   function googleTranslateElementInit() {
-       //     new google.translate.TranslateElement({
-       //         pageLanguage: 'ar',
-       //         includedLanguages: 'ar,en',
-        //        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-        //        autoDisplay: false
-       //     }, 'google_translate_element');
-     //   }
-//    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     
     <style>
         :root {
@@ -26,9 +15,7 @@
         }
         .dark-mode { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --border: #334155; --nav-bg: rgba(30, 41, 59, 0.9); }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); margin: 0; transition: 0.3s; top: 0 !important; }
-        .goog-te-banner-frame.skiptranslate, .goog-te-gadget-icon { display: none !important; }
-        body { top: 0px !important; }
-
+        
         .top-bar { background: var(--card); padding: 8px 15px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .nav-header { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 15px; width: 100%; max-width: 1200px; margin: auto; }
 
@@ -70,28 +57,22 @@
 
         .report-btn { background: var(--purple); color: white; border: none; padding: 12px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
 
-        .teacher-achievements { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
-        .badge-mini { background: var(--bg); padding: 6px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; border: 1px solid var(--border); }
-
         .bottom-nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: var(--nav-bg); backdrop-filter: blur(12px); padding: 10px; border-radius: 40px; display: flex; gap: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 2000; border: 1px solid var(--border); width: 90%; max-width: 500px; justify-content: space-around; }
         .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; gap: 3px; min-width: 50px; }
         .nav-item i { font-size: 1rem; }
         .nav-item span { font-size: 0.6rem; font-weight: 800; }
 
         .container { max-width: 1200px; margin: 15px auto; padding: 0 10px; }
-        #google_translate_element { display: none; }
     </style>
 </head>
 <body class="has-nav">
-
-<div id="google_translate_element"></div>
 
 <div id="topBar" class="top-bar">
     <div class="nav-header">
         <div id="dateDisplay" class="notranslate" style="font-weight: 800; color: var(--text); font-size: 0.7rem;"></div>
         
         <div class="header-ticker">
-            <p id="tickerText">مرحباً بكم في منصة العنقود الرقمية ..ادارة المدرسة ومشرف العنقود يحييكم .. عام دراسي مبدع للجميع.</p>
+            <p id="tickerText">مرحباً بكم في منصة العنقود الرقمية .. إدارة المدرسة ومشرف العنقود يحييكم .. عام دراسي مبدع للجميع.</p>
         </div>
 
         <div style="display: flex; align-items: center; gap: 8px;">
@@ -105,8 +86,8 @@
     <div class="welcome-frame" style="width: 100%; max-width: 380px;">
         <div class="auth-card">
             <img src="https://github.com/Sami-ghannam/Beit-Alroosh-AlTehta-School/blob/main/logo.png?raw=true" style="width: 60px;">
-            <h3 style="color: var(--primary); margin: 10px 0;">تسجيل الدخول للمنصة (للطلبة: 1)</h3>
-            <p style="font-size: 0.65rem; color: var(--gray); margin-bottom: 20px;"> م. سامي غنام - الاصدار التجريبي</p>
+            <h3 style="color: var(--primary); margin: 10px 0;">تسجيل الدخول للمنصة</h3>
+            <p style="font-size: 0.65rem; color: var(--gray); margin-bottom: 20px;"> م. سامي غنام - الإصدار التجريبي</p>
             <input type="password" id="sysPass" style="width: 90%; padding: 12px; border-radius: 12px; border: 2px solid var(--border); text-align: center; font-weight: 900; background: var(--bg); color: var(--text); font-size: 1rem; margin-bottom: 15px;" placeholder="أدخل الرمز">
             <button style="width: 90%; padding: 12px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; background: var(--primary); color: white; margin-bottom: 10px;" onclick="handleLogin()">دخول</button>
             <button style="width: 90%; padding: 10px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; background: #fee2e2; color: var(--danger);" onclick="confirmFinalExit()"><i class="fas fa-power-off"></i> إغلاق</button>
@@ -128,11 +109,6 @@
 
     <div class="welcome-frame">
         <div class="auth-card" style="padding: 15px;">
-            <div id="teacherGamification" style="display:none;" class="teacher-achievements">
-                <div class="badge-mini"><i class="fas fa-stopwatch" style="color:var(--primary)"></i> حصص دقيقة: <span id="onTimeCount">0</span></div>
-                <div id="fullCommitment" class="badge-mini" style="display:none; border-color: var(--gold); color: #856404; background: #fffdf0;"><i class="fas fa-crown" style="color:var(--gold)"></i> وسام الالتزام</div>
-            </div>
-
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <span id="userBadge" style="background: var(--primary); color: white; padding: 4px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: bold;"></span>
                 <button style="color: var(--danger); border: none; background: none; font-weight: bold; cursor: pointer; font-size: 0.8rem;" onclick="handleLogout()">خروج</button>
@@ -151,24 +127,29 @@
 
 <div id="bottomNav" class="bottom-nav">
     <div class="nav-item" onclick="location.reload()"><i class="fas fa-redo-alt" style="color:var(--success)"></i><span>تحديث</span></div>
-    <div class="nav-item" onclick="toggleLanguage()"><i class="fas fa-language" style="color:var(--purple)"></i><span id="langText">English</span></div>
     <div class="nav-item" onclick="showAbout()"><i class="fas fa-code" style="color:var(--info)"></i><span>v2.9.5</span></div>
-    <div class="nav-item" onclick="window.location.href='mailto:sami.ghannam@shebron.edu.ps'"><i class="fas fa-headset" style="color:#f59e0b"></i><span>الدعم</span></div>
 </div>
 
 <script>
     let rawData = [];
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRaHhyMG9OYbl8nZxRLR04t_vocqxtHkDWMKr6PA5yPtPnWjF2Pmzx6R5epSUWwabJL8AFvcUem-Mau/pub?gid=0&single=true&output=csv';
     const weekDays = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
-    let currentLang = 'ar';
 
     function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
 
-    // تحديث نص شريط الإعلانات ليشمل لوحة الشرف
-    //function updateTickerWithHonorRoll() {
-    //    const honorRoll = " 🏆 لوحة شرف فرسان الالتزام: (ساجي سامي - 3أ)، (سلاف غنام - 9أ)، (ايلاف سامي - 7أ) .. شكراً لمواظبتكم! .. ";
-    //    const baseMsg = "مرحباً بكم في منصة العنقود الرقمية .. الادارة المدرسية وم. سامي غنام يحييكم ويحثكم على الالتزام .. ";
-    //    document.getElementById('tickerText').innerText = baseMsg + honorRoll + " عام دراسي مبدع وهادئ للجميع.";
+    // تحديث الساعة والتاريخ
+    function updateClock() {
+        const now = new Date();
+        const clockDisplay = document.getElementById('clockDisplay');
+        const dateDisplay = document.getElementById('dateDisplay');
+        
+        if(clockDisplay) clockDisplay.innerText = now.toLocaleTimeString('en-GB', {hour12: false});
+        if(dateDisplay) dateDisplay.innerText = now.toLocaleDateString('ar-EG', {weekday:'short', day:'numeric', month:'short'});
+        
+        // تحديث الواجهة تلقائياً كل دقيقة إذا كان مسجل دخول
+        if(now.getSeconds() === 0 && sessionStorage.getItem('isLoggedIn')) { 
+            updateUI(); 
+        }
     }
 
     async function loadData() {
@@ -184,23 +165,22 @@
                     e: c[6]?.trim(), link: c[7]?.trim(), phone: c[8]?.trim() 
                 };
             });
-            setupFilters(); updateUI(); updateTickerWithHonorRoll();
+            setupFilters(); updateUI();
         } catch(e) { console.error("Data Sync Error"); }
     }
 
     function setupFilters() {
         const role = sessionStorage.getItem('userRole');
         if(role === 'إدارة وإشراف') document.getElementById('teacherSelect').style.display = 'block';
-        if(role === 'معلم') {
-            document.getElementById('teacherGamification').style.display = 'flex';
-            updateTeacherStatsUI();
-        }
+        
         const ts = [...new Set(rawData.map(i => i.teacher))].filter(x => x).sort();
-        document.getElementById('teacherSelect').innerHTML = '<option value="">المعلم</option>' + ts.map(t => <option value="${t}">${t}</option>).join('');
+        document.getElementById('teacherSelect').innerHTML = '<option value="">المعلم</option>' + ts.map(t => `<option value="${t}">${t}</option>`).join('');
+        
         const gs = [...new Set(rawData.map(i => i.grade))].filter(x => x).sort();
-        document.getElementById('gradeSelect').innerHTML = '<option value="">الصف</option>' + gs.map(g => <option value="${g}">${g}</option>).join('');
+        document.getElementById('gradeSelect').innerHTML = '<option value="">الصف</option>' + gs.map(g => `<option value="${g}">${g}</option>`).join('');
+        
         const ds = document.getElementById('daySelect');
-        ds.innerHTML = weekDays.map(d => <option value="${d}">${d}</option>).join('');
+        ds.innerHTML = weekDays.map(d => `<option value="${d}">${d}</option>`).join('');
         ds.value = weekDays[new Date().getDay()] || "الأحد";
     }
 
@@ -221,90 +201,67 @@
         loadData();
     }
 
-    function updateTeacherStatsUI() {
-        const count = parseInt(localStorage.getItem('onTimeLessons') || '0');
-        document.getElementById('onTimeCount').innerText = count;
-        if(count >= 5) document.getElementById('fullCommitment').style.display = 'block';
-    }
-
-    function checkAndRecordOnTime(startStr) {
-        if(sessionStorage.getItem('userRole') !== 'معلم') return;
-        const now = new Date();
-        const curMins = now.getHours() * 60 + now.getMinutes();
-        const startMins = (parseInt(startStr.split(':')[0]) * 60) + parseInt(startStr.split(':')[1]);
-        if(curMins >= startMins - 5 && curMins <= startMins + 5) {
-            let count = parseInt(localStorage.getItem('onTimeLessons') || '0');
-            localStorage.setItem('onTimeLessons', count + 1);
-            updateTeacherStatsUI();
-            Swal.fire({ title: 'رائع!', text: 'تم تسجيل حصة دقيقة في سجلاتك ✅', icon: 'success', timer: 1500, showConfirmButton: false });
-        }
-    }
-
     function updateUI() {
         const area = document.getElementById('displayArea');
+        if(!area || rawData.length === 0) return;
+        
         const role = sessionStorage.getItem('userRole');
-        const f = { d: document.getElementById('daySelect').value, g: document.getElementById('gradeSelect').value, s: document.getElementById('sectionSelect').value, t: document.getElementById('teacherSelect')?.value || "" };
-        const now = new Date(); const curMins = now.getHours() * 60 + now.getMinutes();
+        const f = { 
+            d: document.getElementById('daySelect').value, 
+            g: document.getElementById('gradeSelect').value, 
+            s: document.getElementById('sectionSelect').value, 
+            t: document.getElementById('teacherSelect')?.value || "" 
+        };
+        
+        const now = new Date(); 
+        const curMins = now.getHours() * 60 + now.getMinutes();
         let filtered = rawData.filter(i => i.day === f.d && (f.g === "" || i.grade === f.g) && (f.s === "" || i.section === f.s) && (role !== 'إدارة وإشراف' || f.t === "" || i.teacher === f.t));
         
         if(role === 'إدارة وإشراف') {
             let act = 0, wait = 0, done = 0;
-            let html = <table class="admin-table"><thead><tr><th>الصف</th><th>المعلم</th><th>الحالة</th><th>تنبيه</th></tr></thead><tbody>;
+            let html = `<table class="admin-table"><thead><tr><th>الصف</th><th>المعلم</th><th>الحالة</th><th>تنبيه</th></tr></thead><tbody>`;
             filtered.forEach(l => {
-                const sm = (l.s.split(':')[0]*60) + Number(l.s.split(':')[1]);
-                const em = (l.e.split(':')[0]*60) + Number(l.e.split(':')[1]);
+                const sm = (parseInt(l.s.split(':')[0])*60) + parseInt(l.s.split(':')[1]);
+                const em = (parseInt(l.e.split(':')[0])*60) + parseInt(l.e.split(':')[1]);
                 let sCol = (curMins >= sm && curMins <= em) ? 'var(--success)' : (curMins > em) ? 'var(--gray)' : 'var(--danger)';
                 let sTxt = (curMins >= sm && curMins <= em) ? 'نشطة' : (curMins > em) ? 'منتهية' : 'انتظار';
                 if(curMins>=sm && curMins<=em) act++; else if(curMins>em) done++; else wait++;
-                const waLink = https://wa.me/${l.phone}?text=${encodeURIComponent('يرجى بدء الحصة لصف '+l.grade+'-'+l.section)};
-                html += <tr><td>${l.grade}-${l.section}</td><td>${l.teacher}</td><td><button onclick="window.open('${l.link}')" style="background:none; border:1px solid ${sCol}; color:${sCol}; padding:5px; border-radius:8px; font-weight:bold; width:100%">${sTxt}</button></td><td><button onclick="window.open('${waLink}')" style="background:var(--whatsapp); color:white; border:none; padding:5px 10px; border-radius:8px; cursor:pointer;"><i class="fab fa-whatsapp"></i></button></td></tr>;
+                
+                html += `<tr><td>${l.grade}-${l.section}</td><td>${l.teacher}</td><td><button onclick="window.open('${l.link}')" style="background:none; border:1px solid ${sCol}; color:${sCol}; padding:5px; border-radius:8px; font-weight:bold; width:100%">${sTxt}</button></td><td><button onclick="window.open('https://wa.me/${l.phone}')" style="background:var(--whatsapp); color:white; border:none; padding:5px 10px; border-radius:8px;"><i class="fab fa-whatsapp"></i></button></td></tr>`;
             });
             area.innerHTML = html + "</tbody></table>";
-            document.getElementById('countActive').innerText = act; document.getElementById('countWait').innerText = wait; document.getElementById('countDone').innerText = done;
+            document.getElementById('countActive').innerText = act; 
+            document.getElementById('countWait').innerText = wait; 
+            document.getElementById('countDone').innerText = done;
             const p = filtered.length > 0 ? Math.round(((done + act) / filtered.length) * 100) : 0;
-            document.getElementById('percentDone').innerText = p + "%"; document.getElementById('progBar').style.width = p + "%";
+            document.getElementById('percentDone').innerText = p + "%"; 
+            document.getElementById('progBar').style.width = p + "%";
         } else {
-            area.innerHTML = <div style="display:grid; gap:10px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));"></div>;
+            let html = '<div style="display:grid; gap:10px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">';
             filtered.forEach(l => {
-                const sm = (l.s.split(':')[0]*60) + Number(l.s.split(':')[1]);
-                const em = (l.e.split(':')[0]*60) + Number(l.e.split(':')[1]);
+                const sm = (parseInt(l.s.split(':')[0])*60) + parseInt(l.s.split(':')[1]);
+                const em = (parseInt(l.e.split(':')[0])*60) + parseInt(l.e.split(':')[1]);
                 const isOpen = (curMins >= sm - 5 && curMins <= em + 5);
-                area.firstChild.innerHTML += <div class="auth-card" style="border-right:5px solid ${isOpen?'var(--success)':'var(--danger)'}; text-align:right; margin-bottom:5px;"><b>${l.sub}</b> | ${l.teacher}<br><small>${l.grade}-${l.section} | ${l.s} - ${l.e}</small><br><button style="width: 100%; padding: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; margin-top:8px; background:${isOpen?'var(--primary)':'gray'}; color:white" ${isOpen?'':'disabled'} onclick="checkAndRecordOnTime('${l.s}'); window.open('${l.link}')">${isOpen?'دخول الآن':'الحصة مغلقة'}</button></div>;
+                html += `<div class="auth-card" style="border-right:5px solid ${isOpen?'var(--success)':'var(--danger)'}; text-align:right; margin-bottom:5px;"><b>${l.sub}</b> | ${l.teacher}<br><small>${l.grade}-${l.section} | ${l.s} - ${l.e}</small><br><button style="width: 100%; padding: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; margin-top:8px; background:${isOpen?'var(--primary)':'gray'}; color:white" ${isOpen?'':'disabled'} onclick="window.open('${l.link}')">${isOpen?'دخول الآن':'الحصة مغلقة'}</button></div>`;
             });
+            area.innerHTML = html + '</div>';
         }
-    }
-
-    function generateDailyReport() {
-        const day = document.getElementById('daySelect').value;
-        let reportData = rawData.filter(i => i.day === day).map(l => ({ 'اليوم': l.day, 'الصف': l.grade, 'المعلم': l.teacher, 'المادة': l.sub, 'الوقت': l.s + '-' + l.e }));
-        const ws = XLSX.utils.json_to_sheet(reportData);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "التقرير");
-        XLSX.writeFile(wb, تقرير_العنقود_${day}.xlsx);
-    }
-
-    function toggleLanguage() {
-        const combo = document.querySelector('.goog-te-combo');
-        if (!combo) return;
-        if (currentLang === 'ar') { combo.value = 'en'; currentLang = 'en'; document.getElementById('langText').innerText = 'العربية'; document.documentElement.setAttribute('dir', 'ltr'); }
-        else { combo.value = 'ar'; currentLang = 'ar'; document.getElementById('langText').innerText = 'English'; document.documentElement.setAttribute('dir', 'rtl'); }
-        combo.dispatchEvent(new Event('change'));
-        setTimeout(updateUI, 400);
     }
 
     function handleLogout() { sessionStorage.removeItem('isLoggedIn'); window.location.reload(); }
     function confirmFinalExit() { Swal.fire({ title: 'خروج نهائي؟', text: "هل أنت متأكد!", icon: 'warning', showCancelButton: true }).then((r) => { if(r.isConfirmed) { sessionStorage.clear(); window.location.replace("https://www.google.ps"); } }); }
+    function showAbout() { Swal.fire(' م. سامي غنام' , 'منصة العنقود الرقمية v2.9.5\n نظام التعلم الالكتروني والتحفيز الذكي', 'info'); }
 
-    function updateClock() {
-        const now = new Date();
-        if(document.getElementById('clockDisplay')) document.getElementById('clockDisplay').innerText = now.toLocaleTimeString('en-GB', {hour12: false});
-        if(document.getElementById('dateDisplay')) document.getElementById('dateDisplay').innerText = now.toLocaleDateString('ar-EG', {weekday:'short', day:'numeric', month:'short'});
-        if(now.getSeconds() === 0 && sessionStorage.getItem('isLoggedIn')) { updateUI(); updateTickerWithHonorRoll(); }
-    }
-    function showAbout() { Swal.fire(' م. سامي غنام' , 'منصة العنقود الرقمية التجريبية v1.0.1\n نظام التعلم الالكتروني والتحفيز الذكي', 'info'); }
-
+    // تشغيل الساعة كل ثانية
     setInterval(updateClock, 1000);
-    window.onload = () => { if(sessionStorage.getItem('isLoggedIn')) showApp(); else updateClock(); };
+
+    // عند تشغيل الصفحة
+    window.onload = () => { 
+        updateClock(); // تشغيل الساعة فوراً عند التحميل
+        if(sessionStorage.getItem('isLoggedIn')) {
+            showApp(); 
+        }
+    };
 </script>
 </body>
 </html>
