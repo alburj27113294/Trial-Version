@@ -112,3 +112,80 @@
         </div>
     </div>
 </div>
+
+<div class="bottom-nav">
+    <div class="nav-item" onclick="location.reload()"><i class="fas fa-sync" style="color:var(--success)"></i><span>تحديث</span></div>
+    <div class="nav-item" onclick="toggleDarkMode()"><i class="fas fa-adjust" style="color:var(--purple)"></i><span>المظهر</span></div>
+    <div class="nav-item" onclick="Swal.fire('العنقود الرقمي','الاصدار 3.0 - م. سامي غنام','info')"><i class="fas fa-info-circle" style="color:var(--info)"></i><span>حول</span></div>
+</div>
+
+<script>
+    const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRaHhyMG9OYbl8nZxRLR04t_vocqxtHkDWMKr6PA5yPtPnWjF2Pmzx6R5epSUWwabJL8AFvcUem-Mau/pub?gid=0&single=true&output=csv';
+    
+    function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
+
+    // الخروج النهائي ومسح الذاكرة الدائمة
+    function confirmFinalExit() {
+        Swal.fire({
+            title: 'تأكيد الخروج؟',
+            text: "سيتم مسح الرمز المسجل وكل البيانات المخزنة",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'نعم، امسح واخرج',
+            cancelButtonText: 'إلغاء'
+        }).then((r) => {
+            if (r.isConfirmed) {
+                localStorage.clear();
+                sessionStorage.clear();
+                location.reload();
+            }
+        });
+    }
+
+    function handleLogin() {
+        const p = document.getElementById('sysPass').value.trim();
+        let role = (p === "1") ? 'طالب' : (p === "3294") ? 'معلم' : (p === "1234") ? 'إدارة' : '';
+        
+        if(!role) { 
+            Swal.fire('خطأ', 'الرمز غير صحيح', 'error'); 
+            return; 
+        }
+
+        // حفظ الدخول في localStorage ليبقى حتى بعد التحديث
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userRole', role);
+        showApp();
+    }
+
+    function handleLogout() {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('userRole');
+        location.reload();
+    }
+
+    function showApp() {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+        const role = localStorage.getItem('userRole');
+        document.getElementById('userBadge').innerText = "مرحباً: " + role;
+        document.getElementById('tickerText').innerText = "تم تسجيل الدخول بنجاح.. جاري عرض الجدول.";
+    }
+
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('clockDisplay').innerText = now.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+        document.getElementById('dateDisplay').innerText = now.toLocaleDateString('ar-EG', {weekday:'long', day:'numeric', month:'short'});
+    }
+
+    // التحقق عند فتح الصفحة إذا كان المستخدم مسجل دخول سابقاً
+    window.onload = () => {
+        updateClock();
+        setInterval(updateClock, 1000);
+        if(localStorage.getItem('isLoggedIn') === 'true') {
+            showApp();
+        }
+    };
+</script>
+
+</body>
+</html>
