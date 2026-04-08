@@ -30,7 +30,8 @@
         body { top: 0px !important; }
 
         .top-bar { background: var(--card); padding: 8px 15px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .nav-header { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 15px; width: 100%; max-width: 1200px; margin: auto; }
+        /* تعديل التوزيع لضمان التاريخ يمين والساعة والوضع الليلي يسار */
+        .nav-header { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; width: 100%; max-width: 1200px; margin: auto; }
 
         .header-ticker { 
             overflow: hidden; 
@@ -39,6 +40,7 @@
             border-radius: 20px; 
             padding: 4px 10px; 
             border: 1px inset var(--border);
+            margin: 0 5px;
         }
         .header-ticker p { 
             display: inline-block; 
@@ -68,193 +70,4 @@
         .admin-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
         .admin-table th, .admin-table td { padding: 10px; border: 1px solid var(--border); text-align: center; }
 
-        .report-btn { background: var(--purple); color: white; border: none; padding: 12px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
-
-        .teacher-achievements { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
-        .badge-mini { background: var(--bg); padding: 6px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; border: 1px solid var(--border); }
-
-        .bottom-nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: var(--nav-bg); backdrop-filter: blur(12px); padding: 10px; border-radius: 40px; display: flex; gap: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 2000; border: 1px solid var(--border); width: 90%; max-width: 500px; justify-content: space-around; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; gap: 3px; min-width: 50px; }
-        .nav-item i { font-size: 1rem; }
-        .nav-item span { font-size: 0.6rem; font-weight: 800; }
-
-        .container { max-width: 1200px; margin: 15px auto; padding: 0 10px; }
-        #google_translate_element { display: none; }
-    </style>
-</head>
-<body class="has-nav">
-
-<div id="google_translate_element"></div>
-
-<div id="topBar" class="top-bar">
-    <div class="nav-header">
-        <div id="dateDisplay" class="notranslate" style="font-weight: 800; color: var(--text); font-size: 0.7rem;"></div>
-        
-        <div class="header-ticker">
-            <p id="tickerText">مرحباً بكم في منصة العنقود الرقمية ..ادارة المدرسة ومشرف العنقود يحييكم .. عام دراسي مبدع للجميع.</p>
-        </div>
-
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <div id="clockDisplay" class="notranslate" style="font-weight: 900; font-size: 0.8rem; color: var(--primary);"></div>
-            <i class="fas fa-circle-half-stroke fa-lg" onclick="toggleDarkMode()" style="cursor: pointer; color: var(--gray);"></i>
-        </div>
-    </div>
-</div>
-
-<div id="loginScreen" style="display: flex; align-items: center; justify-content: center; min-height: 80vh; padding: 15px;">
-    <div class="welcome-frame" style="width: 100%; max-width: 380px;">
-        <div class="auth-card">
-            <img src="https://github.com/Sami-ghannam/Beit-Alroosh-AlTehta-School/blob/main/logo.png?raw=true" style="width: 60px;">
-            <h3 style="color: var(--primary); margin: 10px 0;">تسجيل الدخول للمنصة (للطلبة: 1)</h3>
-            <p style="font-size: 0.65rem; color: var(--gray); margin-bottom: 20px;"> م. سامي غنام - الاصدار التجريبي</p>
-            <input type="password" id="sysPass" style="width: 90%; padding: 12px; border-radius: 12px; border: 2px solid var(--border); text-align: center; font-weight: 900; background: var(--bg); color: var(--text); font-size: 1rem; margin-bottom: 15px;" placeholder="أدخل الرمز">
-            <button style="width: 90%; padding: 12px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; background: var(--primary); color: white; margin-bottom: 10px;" onclick="handleLogin()">دخول</button>
-            <button style="width: 90%; padding: 10px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; background: #fee2e2; color: var(--danger);" onclick="confirmFinalExit()"><i class="fas fa-power-off"></i> إغلاق</button>
-        </div>
-    </div>
-</div>
-
-<div id="mainApp" style="display:none;" class="container">
-    <div id="adminDashboard" style="display:none; margin-bottom: 20px;">
-        <div class="admin-stats-grid">
-            <div class="stat-card"><span class="stat-num" id="countActive">0</span><span>نشطة</span></div>
-            <div class="stat-card"><span class="stat-num" id="countWait">0</span><span>انتظار</span></div>
-            <div class="stat-card"><span class="stat-num" id="countDone">0</span><span>مكتملة</span></div>
-            <div class="stat-card"><span class="stat-num" id="percentDone">0%</span><span>إنجاز</span></div>
-        </div>
-        <div class="progress-container"><div id="progBar" class="progress-bar"></div></div>
-        <button class="report-btn" onclick="generateDailyReport()"><i class="fas fa-file-export"></i> استخراج تقرير الحضور (Excel)</button>
-    </div>
-
-    <div class="welcome-frame">
-        <div class="auth-card" style="padding: 15px;">
-            <div id="teacherGamification" style="display:none;" class="teacher-achievements">
-                <div class="badge-mini"><i class="fas fa-stopwatch" style="color:var(--primary)"></i> حصص دقيقة: <span id="onTimeCount">0</span></div>
-                <div id="fullCommitment" class="badge-mini" style="display:none; border-color: var(--gold); color: #856404; background: #fffdf0;"><i class="fas fa-crown" style="color:var(--gold)"></i> وسام الالتزام</div>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <span id="userBadge" style="background: var(--primary); color: white; padding: 4px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: bold;"></span>
-                <button style="color: var(--danger); border: none; background: none; font-weight: bold; cursor: pointer; font-size: 0.8rem;" onclick="handleLogout()">خروج</button>
-            </div>
-            
-            <div class="filter-grid-expanded">
-                <select id="daySelect" onchange="updateUI()"></select>
-                <select id="teacherSelect" onchange="updateUI()" style="display:none;"></select>
-                <select id="gradeSelect" onchange="updateUI()"><option value="">الصف</option></select>
-                <select id="sectionSelect" onchange="updateUI()"><option value="">الشعبة</option><option value="أ">أ</option><option value="ب">ب</option></select>
-            </div>
-            <div id="displayArea">جاري المزامنة...</div>
-        </div>
-    </div>
-</div>
-
-<div id="bottomNav" class="bottom-nav">
-    <div class="nav-item" onclick="location.reload()"><i class="fas fa-redo-alt" style="color:var(--success)"></i><span>تحديث</span></div>
-    <div class="nav-item" onclick="toggleLanguage()"><i class="fas fa-language" style="color:var(--purple)"></i><span id="langText">English</span></div>
-    <div class="nav-item" onclick="showAbout()"><i class="fas fa-code" style="color:var(--info)"></i><span>v2.9.5</span></div>
-    <div class="nav-item" onclick="window.location.href='mailto:sami.ghannam@shebron.edu.ps'"><i class="fas fa-headset" style="color:#f59e0b"></i><span>الدعم</span></div>
-</div>
-
-<script>
-    let rawData = [];
-    const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRaHhyMG9OYbl8nZxRLR04t_vocqxtHkDWMKr6PA5yPtPnWjF2Pmzx6R5epSUWwabJL8AFvcUem-Mau/pub?gid=0&single=true&output=csv';
-    const weekDays = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
-    let currentLang = 'ar';
-
-    function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
-
-    function updateTickerWithHonorRoll() {
-        const honorRoll = " 🏆 لوحة شرف فرسان الالتزام: (ساجي سامي - 3أ)، (سلاف غنام - 9أ)، (ايلاف سامي - 7أ) .. شكراً لمواظبتكم! .. ";
-        const baseMsg = "مرحباً بكم في منصة العنقود الرقمية .. الادارة المدرسية وم. سامي غنام يحييكم ويحثكم على الالتزام .. ";
-        document.getElementById('tickerText').innerText = baseMsg + honorRoll + " عام دراسي مبدع وهادئ للجميع.";
-    }
-
-    async function loadData() {
-        try {
-            const r = await fetch(sheetURL + '&t=' + Date.now());
-            const t = await r.text();
-            const lines = t.split('\n').filter(l => l.trim() !== "");
-            rawData = lines.slice(1).map(row => {
-                const c = row.split(',');
-                return { 
-                    day: c[0]?.trim(), grade: c[1]?.trim(), section: c[2]?.trim(), 
-                    sub: c[3]?.trim(), teacher: c[4]?.trim(), s: c[5]?.trim(), 
-                    e: c[6]?.trim(), link: c[7]?.trim(), phone: c[8]?.trim() 
-                };
-            });
-            setupFilters(); updateUI(); updateTickerWithHonorRoll();
-        } catch(e) { console.error("Data Sync Error"); }
-    }
-
-    function setupFilters() {
-        const role = sessionStorage.getItem('userRole');
-        if(role === 'إدارة وإشراف') document.getElementById('teacherSelect').style.display = 'block';
-        if(role === 'معلم') {
-            document.getElementById('teacherGamification').style.display = 'flex';
-            updateTeacherStatsUI();
-        }
-        const ts = [...new Set(rawData.map(i => i.teacher))].filter(x => x).sort();
-        document.getElementById('teacherSelect').innerHTML = '<option value="">المعلم</option>' + ts.map(t => `<option value="${t}">${t}</option>`).join('');
-        const gs = [...new Set(rawData.map(i => i.grade))].filter(x => x).sort();
-        document.getElementById('gradeSelect').innerHTML = '<option value="">الصف</option>' + gs.map(g => `<option value="${g}">${g}</option>`).join('');
-        const ds = document.getElementById('daySelect');
-        ds.innerHTML = weekDays.map(d => `<option value="${d}">${d}</option>`).join('');
-        ds.value = weekDays[new Date().getDay()] || "الأحد";
-    }
-
-    function handleLogin() {
-        const p = document.getElementById('sysPass').value.trim();
-        let role = (p === "1") ? 'طالب' : (p === "3294") ? 'معلم' : (p === "1234") ? 'إدارة وإشراف' : '';
-        if(!role) { Swal.fire('تنبيه', 'الرمز غير صحيح', 'error'); return; }
-        sessionStorage.setItem('isLoggedIn', 'true'); sessionStorage.setItem('userRole', role);
-        showApp();
-    }
-
-    function showApp() {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
-        const role = sessionStorage.getItem('userRole');
-        document.getElementById('userBadge').innerText = "البوابة: " + role;
-        if(role === 'إدارة وإشراف') document.getElementById('adminDashboard').style.display = 'block';
-        loadData();
-    }
-
-    function updateTeacherStatsUI() {
-        const count = parseInt(localStorage.getItem('onTimeLessons') || '0');
-        document.getElementById('onTimeCount').innerText = count;
-        if(count >= 5) document.getElementById('fullCommitment').style.display = 'block';
-    }
-
-    function checkAndRecordOnTime(startStr) {
-        if(sessionStorage.getItem('userRole') !== 'معلم') return;
-        const now = new Date();
-        const curMins = now.getHours() * 60 + now.getMinutes();
-        const startMins = (parseInt(startStr.split(':')[0]) * 60) + parseInt(startStr.split(':')[1]);
-        if(curMins >= startMins - 2 && curMins <= startMins + 5) {
-            let count = parseInt(localStorage.getItem('onTimeLessons') || '0');
-            localStorage.setItem('onTimeLessons', count + 1);
-            updateTeacherStatsUI();
-            Swal.fire({ title: 'رائع!', text: 'تم تسجيل حصة دقيقة في سجلاتك ✅', icon: 'success', timer: 1500, showConfirmButton: false });
-        }
-    }
-
-    function updateUI() {
-        const area = document.getElementById('displayArea');
-        if(!area) return;
-        const role = sessionStorage.getItem('userRole');
-        const f = { d: document.getElementById('daySelect').value, g: document.getElementById('gradeSelect').value, s: document.getElementById('sectionSelect').value, t: document.getElementById('teacherSelect')?.value || "" };
-        const now = new Date(); const curMins = now.getHours() * 60 + now.getMinutes();
-        let filtered = rawData.filter(i => i.day === f.d && (f.g === "" || i.grade === f.g) && (f.s === "" || i.section === f.s) && (role !== 'إدارة وإشراف' || f.t === "" || i.teacher === f.t));
-        
-        if(role === 'إدارة وإشراف') {
-            let act = 0, wait = 0, done = 0;
-            let html = `<table class="admin-table"><thead><tr><th>الصف</th><th>المعلم</th><th>الحالة</th><th>تنبيه</th></tr></thead><tbody>`;
-            filtered.forEach(l => {
-                const sm = (l.s.split(':')[0]*60) + Number(l.s.split(':')[1]);
-                const em = (l.e.split(':')[0]*60) + Number(l.e.split(':')[1]);
-                let sCol = (curMins >= sm && curMins <= em) ? 'var(--success)' : (curMins > em) ? 'var(--gray)' : 'var(--danger)';
-                let sTxt = (curMins >= sm && curMins <= em) ? 'نشطة' : (curMins > em) ? 'منتهية' : 'انتظار';
-                if(curMins>=sm && curMins<=em) act++; else if(curMins>em) done++; else wait++;
-                const waLink = `https://wa.me/${l.phone}?text=${encodeURIComponent('يرجى بدء الحصة لصف '+l.grade+'-'+l.section)}`;
-                html += `<tr><td>${l.grade}-${l.section}</td><td>${l.teacher}</td><td><button onclick="window.open('${l.link}')" style="background:none; border:1px solid ${sCol}; color:${sCol}; padding:5px; border-
+        .report-btn { background: var(--purple); color: white
