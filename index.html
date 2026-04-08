@@ -232,7 +232,7 @@
         const now = new Date();
         const curMins = now.getHours() * 60 + now.getMinutes();
         const startMins = (parseInt(startStr.split(':')[0]) * 60) + parseInt(startStr.split(':')[1]);
-        if(curMins >= startMins - 2 && curMins <= startMins + 5) {
+        if(curMins >= startMins - 5 && curMins <= startMins + 5) {
             let count = parseInt(localStorage.getItem('onTimeLessons') || '0');
             localStorage.setItem('onTimeLessons', count + 1);
             updateTeacherStatsUI();
