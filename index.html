@@ -206,7 +206,7 @@
 
     function handleLogin() {
         const p = document.getElementById('sysPass').value.trim();
-        let role = (p === "1") ? 'طالب' : (p === "1111") ? 'معلم' : (p === "1234") ? 'إدارة وإشراف' : '';
+        let role = (p === "1") ? 'طالب' : (p === "3294") ? 'معلم' : (p === "1234") ? 'إدارة وإشراف' : '';
         if(!role) { Swal.fire('تنبيه', 'الرمز غير صحيح', 'error'); return; }
         sessionStorage.setItem('isLoggedIn', 'true'); sessionStorage.setItem('userRole', role);
         showApp();
