@@ -6,135 +6,131 @@
     <title>منصة العنقود الرقمية</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'ar',
-                includedLanguages: 'ar,en',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                autoDisplay: false
-            }, 'google_translate_element');
-        }
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
     <style>
         :root {
-            --primary: #2563eb; --success: #10b981; --danger: #ef4444; --info: #0ea5e9; --purple: #8b5cf6;
-            --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; --gray: #94a3b8; --border: #e2e8f0; --nav-bg: rgba(255,255,255,0.85);
+            --primary: #2563eb; --success: #10b981; --danger: #ef4444;
+            --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; --border: #e2e8f0;
         }
-        .dark-mode { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --border: #334155; --nav-bg: rgba(30, 41, 59, 0.9); }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); margin: 0; transition: 0.3s; top: 0 !important; }
+        .dark-mode { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --border: #334155; }
         
-        .top-bar { background: var(--card); padding: 8px 15px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .nav-header { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; width: 100%; max-width: 1200px; margin: auto; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); margin: 0; transition: 0.3s; }
+        
+        /* الهيدر العلوي */
+        .top-bar { background: var(--card); padding: 10px 15px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; }
+        .nav-header { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: auto; }
 
-        .header-ticker { overflow: hidden; white-space: nowrap; background: rgba(37, 99, 235, 0.05); border-radius: 20px; padding: 4px 10px; border: 1px inset var(--border); margin: 0 5px; }
-        .header-ticker p { display: inline-block; padding-right: 100%; animation: ticker 25s linear infinite; margin: 0; color: var(--primary); font-weight: 800; font-size: 0.8rem; }
-        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(100%, 0, 0); } }
+        /* شاشة الدخول */
+        #loginScreen { display: flex; align-items: center; justify-content: center; min-height: 90vh; }
+        .welcome-frame { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); padding: 20px; border-radius: 30px; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .auth-card { background: var(--card); padding: 30px; border-radius: 20px; text-align: center; }
+        
+        input { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid var(--border); text-align: center; font-size: 1.2rem; margin-bottom: 15px; box-sizing: border-box; }
+        
+        .btn-main { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: bold; cursor: pointer; font-size: 1.1rem; margin-bottom: 15px; }
+        .btn-clear { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--danger); background: transparent; color: var(--danger); font-weight: bold; cursor: pointer; }
 
-        .welcome-frame { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); padding: 15px; border-radius: 30px; box-shadow: 0 15px 35px rgba(30, 64, 175, 0.2); margin-top: 10px; }
-        .auth-card { background: var(--card); padding: 25px; border-radius: 25px; text-align: center; }
-        
-        input { width: 90%; padding: 12px; border-radius: 12px; border: 2px solid var(--border); text-align: center; font-weight: 900; background: var(--bg); color: var(--text); font-size: 1.2rem; margin-bottom: 15px; outline: none; }
-        .btn-login { width: 90%; padding: 12px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; background: var(--primary); color: white; margin-bottom: 10px; font-size: 1rem; }
-        .btn-exit { width: 90%; padding: 10px; border-radius: 12px; border: 1px solid var(--danger); font-weight: bold; cursor: pointer; background: transparent; color: var(--danger); font-size: 0.9rem; transition: 0.2s; }
-        .btn-exit:hover { background: #fee2e2; }
+        /* شاشة التطبيق */
+        .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; display: none; }
+        .app-card { background: var(--card); padding: 20px; border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
 
-        .admin-stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
-        .stat-card { background: var(--card); padding: 12px; border-radius: 15px; border: 1px solid var(--border); text-align: center; }
-        .stat-num { display: block; font-size: 1.4rem; font-weight: 900; color: var(--primary); }
-        
-        .progress-container { background: #e2e8f0; height: 10px; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
-        .progress-bar { height: 100%; background: var(--success); width: 0%; transition: 0.5s; }
-        
-        .container { max-width: 1200px; margin: 15px auto; padding: 0 10px; padding-bottom: 80px; }
-        .bottom-nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: var(--nav-bg); backdrop-filter: blur(12px); padding: 10px; border-radius: 40px; display: flex; gap: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 2000; border: 1px solid var(--border); width: 90%; max-width: 500px; justify-content: space-around; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; gap: 3px; }
-        .nav-item span { font-size: 0.6rem; font-weight: 800; }
-        #google_translate_element { display: none; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); display: flex; justify-content: space-around; padding: 10px; border-top: 1px solid var(--border); }
+        .nav-item { text-align: center; font-size: 0.8rem; cursor: pointer; color: var(--text); }
+        .nav-item i { display: block; font-size: 1.2rem; margin-bottom: 3px; }
     </style>
 </head>
 <body>
 
-<div id="google_translate_element"></div>
-
 <div class="top-bar">
     <div class="nav-header">
-        <div id="dateDisplay" style="font-weight: 800; font-size: 0.7rem;"></div>
-        <div class="header-ticker"><p id="tickerText">جاري مزامنة المنصة...</p></div>
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <div id="clockDisplay" style="font-weight: 900; font-size: 0.8rem; color: var(--primary);"></div>
-            <i class="fas fa-moon" onclick="toggleDarkMode()" style="cursor: pointer;"></i>
-        </div>
+        <div id="dateDisplay" style="font-weight: bold;"></div>
+        <div style="color: var(--primary); font-weight: 900;">منصة العنقود</div>
+        <i class="fas fa-moon" onclick="document.body.classList.toggle('dark-mode')" style="cursor: pointer;"></i>
     </div>
 </div>
 
-<div id="loginScreen" style="display: flex; align-items: center; justify-content: center; min-height: 85vh; padding: 15px;">
-    <div class="welcome-frame" style="width: 100%; max-width: 380px;">
+<div id="loginScreen">
+    <div class="welcome-frame">
         <div class="auth-card">
-            <img src="https://github.com/Sami-ghannam/Beit-Alroosh-AlTehta-School/blob/main/logo.png?raw=true" style="width: 70px; margin-bottom: 10px;">
-            <h3 style="color: var(--primary); margin: 5px 0;">منصة العنقود الرقمية</h3>
-            <p style="font-size: 0.7rem; color: var(--gray); margin-bottom: 20px;">م. سامي غنام - نظام المزامنة الذكي</p>
+            <h2 style="color: var(--primary); margin-top: 0;">تسجيل الدخول</h2>
+            <p style="color: #666; font-size: 0.9rem;">أدخل الرمز للوصول إلى جداولك</p>
             
-            <input type="password" id="sysPass" placeholder="أدخل رمز الدخول">
+            <input type="password" id="sysPass" placeholder="الرمز السري">
             
-            <button class="btn-login" onclick="handleLogin()">دخول للمنصة</button>
+            <button class="btn-main" onclick="handleLogin()">دخول النظام</button>
             
-            <button class="btn-exit" onclick="confirmFinalExit()">
-                <i class="fas fa-sign-out-alt"></i> مسح البيانات والخروج
+            <button class="btn-clear" onclick="fullReset()">
+                <i class="fas fa-trash-alt"></i> مسح الكاش والخروج النهائي
             </button>
         </div>
     </div>
 </div>
 
-<div id="mainApp" style="display:none;" class="container">
-    <div id="adminDashboard" style="display:none; margin-bottom: 20px;">
-        <div class="admin-stats-grid">
-            <div class="stat-card"><span class="stat-num" id="countActive">0</span><span>نشطة</span></div>
-            <div class="stat-card"><span class="stat-num" id="countWait">0</span><span>انتظار</span></div>
-            <div class="stat-card"><span class="stat-num" id="countDone">0</span><span>مكتملة</span></div>
-            <div class="stat-card"><span class="stat-num" id="percentDone">0%</span><span>إنجاز</span></div>
+<div id="mainApp" class="container">
+    <div class="app-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--bg); padding-bottom: 10px; margin-bottom: 20px;">
+            <span id="userRoleDisplay" style="font-weight: bold; color: var(--primary);"></span>
+            <button onclick="logout()" style="background: none; border: none; color: var(--danger); cursor: pointer; font-weight: bold;">تسجيل خروج</button>
         </div>
-        <div class="progress-container"><div id="progBar" class="progress-bar"></div></div>
-    </div>
-
-    <div class="welcome-frame">
-        <div class="auth-card" style="padding: 15px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <span id="userBadge" style="background: var(--primary); color: white; padding: 5px 15px; border-radius: 10px; font-size: 0.8rem; font-weight: bold;"></span>
-                <button style="color: var(--danger); border: none; background: none; font-weight: bold; cursor: pointer;" onclick="handleLogout()">تسجيل خروج</button>
-            </div>
-            
-            <div id="displayArea">جاري تحميل الجداول...</div>
+        
+        <div id="contentArea">
+            <h3>أهلاً بك في المنصة</h3>
+            <p>يتم الآن جلب البيانات من السيرفر...</p>
         </div>
     </div>
 </div>
 
 <div class="bottom-nav">
-    <div class="nav-item" onclick="location.reload()"><i class="fas fa-sync" style="color:var(--success)"></i><span>تحديث</span></div>
-    <div class="nav-item" onclick="toggleDarkMode()"><i class="fas fa-adjust" style="color:var(--purple)"></i><span>المظهر</span></div>
-    <div class="nav-item" onclick="Swal.fire('العنقود الرقمي','الاصدار 3.0 - م. سامي غنام','info')"><i class="fas fa-info-circle" style="color:var(--info)"></i><span>حول</span></div>
+    <div class="nav-item" onclick="location.reload()"><i class="fas fa-sync"></i>تحديث</div>
+    <div class="nav-item" onclick="fullReset()"><i class="fas fa-power-off"></i>خروج</div>
 </div>
 
 <script>
-    const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRaHhyMG9OYbl8nZxRLR04t_vocqxtHkDWMKr6PA5yPtPnWjF2Pmzx6R5epSUWwabJL8AFvcUem-Mau/pub?gid=0&single=true&output=csv';
-    
-    function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
+    // وظيفة التحقق من الدخول فور تشغيل الصفحة
+    function checkLoginStatus() {
+        const loggedIn = localStorage.getItem('isLoggedIn');
+        if (loggedIn === 'true') {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            document.getElementById('userRoleDisplay').innerText = "البوابة: " + localStorage.getItem('userRole');
+        }
+    }
 
-    // الخروج النهائي ومسح الذاكرة الدائمة
-    function confirmFinalExit() {
+    function handleLogin() {
+        const pass = document.getElementById('sysPass').value.trim();
+        let role = "";
+
+        if (pass === "1") role = "طالب";
+        else if (pass === "3294") role = "معلم";
+        else if (pass === "1234") role = "إدارة";
+
+        if (role !== "") {
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userRole', role);
+            location.reload(); // إعادة التحميل لتثبيت الحالة
+        } else {
+            Swal.fire('خطأ', 'الرمز غير صحيح', 'error');
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('userRole');
+        location.reload();
+    }
+
+    // وظيفة مسح الكاش والخروج النهائي
+    function fullReset() {
         Swal.fire({
-            title: 'تأكيد الخروج؟',
-            text: "سيتم مسح الرمز المسجل وكل البيانات المخزنة",
+            title: 'هل أنت متأكد؟',
+            text: "سيتم مسح كافة البيانات المخزنة وإعادة ضبط المنصة",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'نعم، امسح واخرج',
+            confirmButtonColor: '#ef4444',
+            confirmButtonText: 'نعم، مسح الكل',
             cancelButtonText: 'إلغاء'
-        }).then((r) => {
-            if (r.isConfirmed) {
+        }).then((result) => {
+            if (result.isConfirmed) {
                 localStorage.clear();
                 sessionStorage.clear();
                 location.reload();
@@ -142,48 +138,15 @@
         });
     }
 
-    function handleLogin() {
-        const p = document.getElementById('sysPass').value.trim();
-        let role = (p === "1") ? 'طالب' : (p === "3294") ? 'معلم' : (p === "1234") ? 'إدارة' : '';
-        
-        if(!role) { 
-            Swal.fire('خطأ', 'الرمز غير صحيح', 'error'); 
-            return; 
-        }
-
-        // حفظ الدخول في localStorage ليبقى حتى بعد التحديث
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userRole', role);
-        showApp();
-    }
-
-    function handleLogout() {
-        localStorage.removeItem('isLoggedIn');
-        localStorage.removeItem('userRole');
-        location.reload();
-    }
-
-    function showApp() {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
-        const role = localStorage.getItem('userRole');
-        document.getElementById('userBadge').innerText = "مرحباً: " + role;
-        document.getElementById('tickerText').innerText = "تم تسجيل الدخول بنجاح.. جاري عرض الجدول.";
-    }
-
-    function updateClock() {
+    function updateDateTime() {
         const now = new Date();
-        document.getElementById('clockDisplay').innerText = now.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
-        document.getElementById('dateDisplay').innerText = now.toLocaleDateString('ar-EG', {weekday:'long', day:'numeric', month:'short'});
+        document.getElementById('dateDisplay').innerText = now.toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'});
     }
 
-    // التحقق عند فتح الصفحة إذا كان المستخدم مسجل دخول سابقاً
+    // تشغيل الفحص بمجرد تحميل الصفحة
     window.onload = () => {
-        updateClock();
-        setInterval(updateClock, 1000);
-        if(localStorage.getItem('isLoggedIn') === 'true') {
-            showApp();
-        }
+        updateDateTime();
+        checkLoginStatus();
     };
 </script>
 
